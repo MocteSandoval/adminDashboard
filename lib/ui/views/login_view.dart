@@ -1,16 +1,20 @@
+import 'package:admin_dashboard/providers/auth_provider.dart';
+import 'package:flutter/material.dart';
+
+import 'package:provider/provider.dart';
+
 import 'package:admin_dashboard/providers/login_form_provider.dart';
 import 'package:email_validator/email_validator.dart';
-import 'package:flutter/material.dart';
 import 'package:admin_dashboard/router/router.dart';
 import 'package:admin_dashboard/ui/buttons/custom_outlined_button.dart';
 import 'package:admin_dashboard/ui/buttons/link_text.dart';
-import 'package:provider/provider.dart';
 
 class LoginView extends StatelessWidget {
   const LoginView({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    final authProvider = Provider.of<AuthProvider>(context, listen: false);
     return ChangeNotifierProvider(
         create: (_) => LoginFormProvider(),
         child: Builder(builder: (context) {
@@ -63,7 +67,11 @@ class LoginView extends StatelessWidget {
                         const SizedBox(height: 20),
                         CustomOutlinedButton(
                           onPreseed: () {
-                            formProvider.validateForm();
+                            final isValid = formProvider.validateForm();
+                            if (isValid) {
+                              authProvider.login(
+                                  formProvider.email, formProvider.password);
+                            }
                           },
                           text: 'Ingresar',
                         ),
